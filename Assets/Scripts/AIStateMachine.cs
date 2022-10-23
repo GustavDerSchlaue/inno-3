@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = System.Random;
 
 public class AIStateMachine : MonoBehaviour
 {
@@ -10,8 +11,7 @@ public class AIStateMachine : MonoBehaviour
     {
         Patroling,
         Chasing,
-        Attacking,
-        Evading
+        Attacking
     }
     private States _state;
     public NavMeshAgent agent;
@@ -25,7 +25,7 @@ public class AIStateMachine : MonoBehaviour
     [SerializeField]private float timeBetweenAttack;
 
     [SerializeField] private float sightRange, attackRange, healingpackrange;
-    private bool playerInSightRange, playerInAttackRange,healingpackInSightRange,evading;
+    private bool playerInSightRange, playerInAttackRange,healingpackInSightRange;
 
     public PlayerLogic playerLogic;
     private bool startAttack = false;
@@ -265,11 +265,12 @@ public class AIStateMachine : MonoBehaviour
     {
         if (other.tag == "Bullet")
         {
-            evading = true;
-            time = Time.time + 1;
-            
-            evade = other.gameObject.transform.position * -1; //TODO: BEtter
-            Debug.Log(evade);
+            Random random = new Random();
+            if (random.Next(4) == 0)
+            {
+                time = Time.time + 1;
+                evade = other.gameObject.transform.position * -1;
+            }
         }
     }
 
@@ -281,7 +282,6 @@ public class AIStateMachine : MonoBehaviour
         healingpackInSightRange = Physics.CheckSphere(transform.position,healingpackrange,whatIsHealingPack);
         if (time>Time.time)
         {
-            //TODO: 
             agent.SetDestination(evade);
         }
         else
