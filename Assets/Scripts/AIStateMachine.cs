@@ -28,6 +28,7 @@ public class AIStateMachine : MonoBehaviour
     private bool playerInSightRange, playerInAttackRange,healingpackInSightRange,evading;
 
     public PlayerLogic playerLogic;
+    public ShootBullet shoot;
     private bool startAttack = false;
     [SerializeField] private Transform pfBullet;
     private GameObject _enemy;
@@ -44,6 +45,7 @@ public class AIStateMachine : MonoBehaviour
         aimassist = GameObject.Find("AimAssist");
         agent = GetComponent<NavMeshAgent>();
         playerLogic = GetComponent<PlayerLogic>();
+        shoot = GetComponent<ShootBullet>();
     }
 
     private void Patroling()
@@ -141,17 +143,15 @@ public class AIStateMachine : MonoBehaviour
             agent.SetDestination(player.position);
         }
 
-
+        //looks weird af
         if (predictedposition != new Vector3(123, 456, 789))
         {
             aimassist.transform.position = predictedposition;
             transform.LookAt(aimassist.transform.position);
-            if (!startAttack)
+            if (!startAttack)//replaced with direct call to updated shooting logic
             {
-                startAttack = true;
-                Vector3 dir = new Vector3(1f, 0f, 0f);
-                Transform bulletTransform = Instantiate(pfBullet, gameObject.transform.position + gameObject.transform.forward * 1.5f, Quaternion.identity);
-                bulletTransform.GetComponent<BulletLogic>().Setup(dir, _enemy, gameObject);
+                shoot.Shoot();
+                startAttack = true;               
                 Invoke(nameof(ResetAttack), timeBetweenAttack);
             }
         }
@@ -261,7 +261,7 @@ public class AIStateMachine : MonoBehaviour
         return null;
     }
 
-    private void OnTriggerEnter(Collider other)
+    /*private void OnTriggerEnter(Collider other) //FIX THIS
     {
         if (other.tag == "Bullet")
         {
@@ -271,7 +271,7 @@ public class AIStateMachine : MonoBehaviour
             evade = other.gameObject.transform.position * -1; //TODO: BEtter
             Debug.Log(evade);
         }
-    }
+    }*/
 
     // Update is called once per frame
     void Update()

@@ -360,6 +360,7 @@ MonoBehaviour:
   attackRange: 30
   healingpackrange: 15
   playerLogic: {fileID: 0}
+  shoot: {fileID: 0}
   pfBullet: {fileID: 3640516005282372536, guid: 404c82bfdb2580f4384d7754135066f0, type: 3}
 --- !u!195 &149279761
 NavMeshAgent:
@@ -1497,7 +1498,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1550285338782356810, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
       propertyPath: m_Radius
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1550285338782356810, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
       propertyPath: m_Center.y
@@ -1563,6 +1564,22 @@ PrefabInstance:
       propertyPath: m_TranslationAtRest.z
       value: 31.8
       objectReference: {fileID: 0}
+    - target: {fileID: 8277770511304128878, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
+      propertyPath: m_IsLocked
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8277770511304128878, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
+      propertyPath: m_IsContraintActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8277770511304128878, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
+      propertyPath: m_Sources.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8277770511304128878, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
+      propertyPath: m_Sources.Array.data[0].weight
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8277770511304128879, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
       propertyPath: endScreen
       value: 
@@ -1574,6 +1591,10 @@ PrefabInstance:
     - target: {fileID: 8277770511304128879, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
       propertyPath: RechargeRate
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8277770511304128880, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
+      propertyPath: speed
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 8277770511304128880, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
       propertyPath: m_Enabled
@@ -1622,6 +1643,10 @@ PrefabInstance:
     - target: {fileID: 8277770511304128882, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8277770511304128883, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8277770512295372919, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
       propertyPath: m_AnchorMax.x
@@ -4299,7 +4324,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1379090035072620708, guid: 9080cdf4e34deee499a0c012db5a26a7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.4
+      value: 1.08
       objectReference: {fileID: 0}
     - target: {fileID: 1379090035072620708, guid: 9080cdf4e34deee499a0c012db5a26a7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4414,6 +4439,10 @@ PrefabInstance:
       propertyPath: ChargeIndicator
       value: 
       objectReference: {fileID: 1378229333}
+    - target: {fileID: 8277770511304128880, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
+      propertyPath: speed
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 8277770511304128882, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
       propertyPath: m_RootOrder
       value: 4
