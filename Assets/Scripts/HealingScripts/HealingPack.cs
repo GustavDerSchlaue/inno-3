@@ -41,12 +41,12 @@ public class HealingPack : MonoBehaviour
         else if (other.gameObject == enemies[0])
         {
             Debug.Log("testb");
-            i = players[1].GetComponent<PlayerLogic>().HP + 50;
+            i = enemies[0].GetComponent<PlayerLogic>().HP + 50;
             if (i > 100)
             {
                 i = 100;
             }
-            players[1].GetComponent<PlayerLogic>().HP = i;
+            enemies[0].GetComponent<PlayerLogic>().HP = i;
             Destroy(gameObject);
         }
     }
