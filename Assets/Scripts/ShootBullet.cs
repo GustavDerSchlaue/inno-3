@@ -9,6 +9,8 @@ public class ShootBullet : MonoBehaviour
     [SerializeField] private GameObject Enemy;
     public PlayerLogic PlayerLogic;
     public GameObject thisplayer;
+    public Transform shootFrom;
+    public float bulletspeed;
 
     /*
     [SerializeField] float fireRate = 2f;
@@ -51,11 +53,12 @@ public class ShootBullet : MonoBehaviour
         }
         */
     }
-    private void Shoot()
+    public void Shoot()
     {
         Vector3 dir = new Vector3(1f, 0f, 0f);
-        Transform bulletTransform = Instantiate(pfBullet, gameObject.transform.position + gameObject.transform.forward * 1.5f, Quaternion.identity);
-        bulletTransform.GetComponent<BulletLogic>().Setup(dir, Enemy, gameObject);
+        var bullet = Instantiate(pfBullet, shootFrom.position, shootFrom.rotation);
+        bullet.GetComponent<Rigidbody>().velocity = shootFrom.forward * bulletspeed;
+        bullet.GetComponent<BulletLogic>().SetUp(Enemy, gameObject);
 
     }
 }

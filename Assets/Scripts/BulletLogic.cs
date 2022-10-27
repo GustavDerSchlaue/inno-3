@@ -19,23 +19,21 @@ public class BulletLogic : MonoBehaviour
     Vector3 dire = new Vector3();
     int slowframes = 0;
 
-    public void Setup(Vector3 dir, GameObject enemy, GameObject _player)
+    public void SetUp( GameObject enemy, GameObject _player)
     {
-        transform.eulerAngles = dir;
         this.target = enemy;
         this.bounces = this.maxbounce;
-        dire = dir;
         player = _player;
     }
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.AddForce(player.transform.forward * .0002f*speed);//weird
     }
 
     void Update()
     {
         lastvelocity = rb.velocity;
+        Debug.Log(lastvelocity);
     }
 
 
