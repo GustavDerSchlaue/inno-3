@@ -431,7 +431,6 @@ GameObject:
   - component: {fileID: 8277770511279187658}
   - component: {fileID: 8277770511279187659}
   - component: {fileID: 8277770511279187656}
-  - component: {fileID: 8277770511279187657}
   - component: {fileID: 8277770511279187654}
   - component: {fileID: 8277770511279187655}
   - component: {fileID: 176527438288044850}
@@ -522,19 +521,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &8277770511279187657
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8277770511279187653}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1818360608 &8277770511279187654
 PositionConstraint:
   m_ObjectHideFlags: 0
@@ -545,7 +531,7 @@ PositionConstraint:
   m_Enabled: 1
   m_Weight: 1
   m_TranslationAtRest: {x: 0, y: -1, z: 0}
-  m_TranslationOffset: {x: 0, y: 1.5, z: 0}
+  m_TranslationOffset: {x: -3.025, y: 1.5, z: 19.875}
   m_AffectTranslationX: 1
   m_AffectTranslationY: 1
   m_AffectTranslationZ: 1
@@ -724,7 +710,7 @@ PositionConstraint:
   m_GameObject: {fileID: 8277770511304128875}
   m_Enabled: 1
   m_Weight: 1
-  m_TranslationAtRest: {x: 0, y: 3, z: 0}
+  m_TranslationAtRest: {x: -4.84, y: 3, z: 31.8}
   m_TranslationOffset: {x: 0, y: 0, z: 0}
   m_AffectTranslationX: 0
   m_AffectTranslationY: 1

@@ -5,7 +5,6 @@ using UnityEngine;
 public class BulletLogic : MonoBehaviour
 {
 
-    private Vector3 direction;
     private int bounces;
     private GameObject target;
     private Rigidbody rb;
@@ -33,7 +32,6 @@ public class BulletLogic : MonoBehaviour
     void Update()
     {
         lastvelocity = rb.velocity;
-        Debug.Log(lastvelocity);
     }
 
 
