@@ -32,6 +32,10 @@ public class BulletLogic : MonoBehaviour
     void Update()
     {
         lastvelocity = rb.velocity;
+        if (lastvelocity.magnitude<40)
+            ++slowframes;
+        if(slowframes>4)
+            Destroy(gameObject);
     }
 
 
