@@ -11,7 +11,8 @@ public class AIStateMachine : MonoBehaviour
         Patroling,
         Chasing,
         Attacking,
-        Evading
+        Evading,
+        Fleeing
     }
     private States _state;
     public NavMeshAgent agent;
@@ -106,6 +107,15 @@ public class AIStateMachine : MonoBehaviour
         {
             agent.SetDestination(player.position);
         }
+    }
+
+    private void Fleeing()
+    {
+        GameObject closesthealingpack = null;
+        closesthealingpack = FindClosestHealingPack();
+        Vector3 distancepack = closesthealingpack.transform.position - transform.position;
+        agent.SetDestination(closesthealingpack.transform.position);
+
     }
 
     private void Attacking()
@@ -279,6 +289,8 @@ public class AIStateMachine : MonoBehaviour
         playerInSightRange = Physics.CheckSphere(transform.position,sightRange,whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position,attackRange,whatIsPlayer);
         healingpackInSightRange = Physics.CheckSphere(transform.position,healingpackrange,whatIsHealingPack);
+        if (playerLogic.HP < 45)
+            _state = States.Fleeing;
         if (time>Time.time)
         {
             //TODO: 
@@ -306,6 +318,13 @@ public class AIStateMachine : MonoBehaviour
                     Attacking();
                     if (!playerInAttackRange || !CheckPointingAtEnemy())
                         _state = States.Chasing;
+                    break;
+                case States.Fleeing:
+                    Fleeing();
+                    if (playerLogic.HP >= 45)
+                    {
+                        _state = States.Patroling;
+                    }
                     break;
                 default:
                     break;
