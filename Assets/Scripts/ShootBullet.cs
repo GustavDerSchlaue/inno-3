@@ -38,7 +38,7 @@ public class ShootBullet : MonoBehaviour
     {
         if (Input.GetKeyDown("space") && PlayerLogic.Bullets > 0 && PlayerLogic.isHuman == true) //serialize this
         {
-            PlayerLogic.Bullets--;
+            --PlayerLogic.Bullets;
             Shoot();
         }
         /*
@@ -55,6 +55,12 @@ public class ShootBullet : MonoBehaviour
     }
     public void Shoot()
     {
+        if(PlayerLogic.isHuman == false)
+        {
+            if (PlayerLogic.Bullets <= 0)
+                return;
+            --PlayerLogic.Bullets;
+        }
         Vector3 dir = new Vector3(1f, 0f, 0f);
         var bullet = Instantiate(pfBullet, shootFrom.position, shootFrom.rotation);
         bullet.GetComponent<Rigidbody>().velocity = shootFrom.forward * bulletspeed;
