@@ -8,8 +8,8 @@ public class LifePointsHUBScript : MonoBehaviour
     public GameObject[] players;
     public PlayerLogic _player;
     public PlayerLogic _opponent;
-    public Text playerLifeHUD;
-    public Text oponentLifeHUD; 
+    public HealthBar playerLifeHUD;
+    public HealthBar oponentLifeHUD; 
 
     // Start is called before the first frame update
     void Start()
@@ -32,7 +32,7 @@ public class LifePointsHUBScript : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-            playerLifeHUD.text = _player.HP.ToString();
-            oponentLifeHUD.text = _opponent.HP.ToString();
+            playerLifeHUD.SetHealth(_player.HP);
+            oponentLifeHUD.SetHealth(_opponent.HP);
     }
 }
