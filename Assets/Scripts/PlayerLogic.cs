@@ -46,6 +46,7 @@ public class PlayerLogic : MonoBehaviour
                 this.Bullets++;
             }
         }
+        _healthbar.SetHealth(HP);
     }
     public void Damage()
     {
