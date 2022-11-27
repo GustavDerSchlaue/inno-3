@@ -9,7 +9,6 @@ public class LifePointsHUBScript : MonoBehaviour
     public PlayerLogic _player;
     public PlayerLogic _opponent;
     public HealthBar playerLifeHUD;
-    public HealthBar oponentLifeHUD; 
 
     // Start is called before the first frame update
     void Start()
@@ -17,11 +16,6 @@ public class LifePointsHUBScript : MonoBehaviour
         players = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject player in players)
         {
-            if (player != gameObject)
-            {
-                _opponent = player.GetComponent<PlayerLogic>();
-                break;
-            }
             if (player == gameObject)
             {
                 _player = player.GetComponent<PlayerLogic>();
@@ -33,6 +27,5 @@ public class LifePointsHUBScript : MonoBehaviour
     void LateUpdate()
     {
             playerLifeHUD.SetHealth(_player.HP);
-            oponentLifeHUD.SetHealth(_opponent.HP);
     }
 }
