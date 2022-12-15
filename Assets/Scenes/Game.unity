@@ -3207,10 +3207,10 @@ RectTransform:
   m_Father: {fileID: 1455177053}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -485, y: -189}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.08725731, y: 0.20210247}
+  m_AnchoredPosition: {x: -2.5, y: -4}
+  m_SizeDelta: {x: 7, y: 6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1378229333
 MonoBehaviour:
@@ -3234,7 +3234,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: aa3dcfab4840c934da1e4117d8108633, type: 3}
   m_Type: 3
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -4004,17 +4004,17 @@ RectTransform:
   m_GameObject: {fileID: 1658313501}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 0.4099588, z: 1}
   m_Children:
   - {fileID: 986554971}
   - {fileID: 1176954920}
   m_Father: {fileID: 1455177053}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -429.73, y: 197.4}
-  m_SizeDelta: {x: 210.5305, y: 45.5982}
+  m_AnchorMin: {x: 0, y: 0.9245258}
+  m_AnchorMax: {x: 0.20027083, y: 1}
+  m_AnchoredPosition: {x: 1, y: 12.9999695}
+  m_SizeDelta: {x: 2.5305176, y: 77.598206}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1658313503
 MonoBehaviour:
@@ -4823,6 +4823,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8277770511197505992, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8277770511197505992, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 1920
+      objectReference: {fileID: 0}
+    - target: {fileID: 8277770511197505992, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 1080
+      objectReference: {fileID: 0}
     - target: {fileID: 8277770511279187654, guid: 7b893e3017781dd42a3e28b7a4790ded, type: 3}
       propertyPath: m_TranslationOffset.x
       value: 0
