@@ -10,7 +10,9 @@ public class AIStateMachine : MonoBehaviour
     {
         Patroling,
         Chasing,
-        Attacking
+        Attacking,
+        Evading,
+        Fleeing
     }
     private States _state;
     public NavMeshAgent agent;
@@ -24,14 +26,18 @@ public class AIStateMachine : MonoBehaviour
     [SerializeField]private float timeBetweenAttack;
 
     [SerializeField] private float sightRange, attackRange, healingpackrange;
-    private bool playerInSightRange, playerInAttackRange,healingpackInSightRange;
+    private bool playerInSightRange, playerInAttackRange,healingpackInSightRange,evading;
 
     public PlayerLogic playerLogic;
+    public ShootBullet shoot;
     private bool startAttack = false;
     [SerializeField] private Transform pfBullet;
     private GameObject _enemy;
     private bool aiChaseDownPlayer = false;
     private GameObject aimassist;
+    private float? time;
+    private Vector3 evade;
+    private double framecount;
 
     private void Awake()
     {
@@ -41,17 +47,28 @@ public class AIStateMachine : MonoBehaviour
         aimassist = GameObject.Find("AimAssist");
         agent = GetComponent<NavMeshAgent>();
         playerLogic = GetComponent<PlayerLogic>();
+        shoot = GetComponent<ShootBullet>();
+        Application.targetFrameRate = 144; //needs to be fixed for new aiming mechanic
     }
 
     private void Patroling()
     {
-        if (!walkPointSet)
-            SearchWalkPoint();
-        if (walkPointSet)
-            agent.SetDestination(walkPoint);
-        Vector3 distanceToWalkPoint = transform.position - walkPoint;
-        if (distanceToWalkPoint.magnitude < 3f)
-            walkPointSet = false;
+        GameObject closesthealingpack = null;
+        if (healingpackInSightRange)
+        {
+            closesthealingpack = FindClosestHealingPack();
+            agent.SetDestination(closesthealingpack.transform.position);
+        }
+        else
+        {
+            if (!walkPointSet)
+                SearchWalkPoint();
+            if (walkPointSet)
+                agent.SetDestination(walkPoint);
+            Vector3 distanceToWalkPoint = transform.position - walkPoint;
+            if (distanceToWalkPoint.magnitude < 3f)
+                walkPointSet = false;
+        }
     }
 
     private void SearchWalkPoint()
@@ -64,40 +81,153 @@ public class AIStateMachine : MonoBehaviour
         walkPoint = new Vector3(randomX,transform.position.y, randomZ);
         if (Physics.Raycast(walkPoint, -transform.up, 4f, whatIsGround) && !Physics.Raycast(walkPoint, transform.up, 10f, whatIsObstacle))
         {
-            Debug.Log("found patroling point");
             walkPointSet = true; 
         }
     }
 
     private void Chasing()
     {
-        agent.SetDestination(player.position);
+        GameObject closesthealingpack = null;
+        if (healingpackInSightRange)
+        {
+            closesthealingpack = FindClosestHealingPack();
+            Vector3 distancepack = closesthealingpack.transform.position - transform.position;
+            Vector3 distanceenemy = player.position - transform.position;
+            float distancepackF = distancepack.sqrMagnitude;
+            float distanceenemyF = distanceenemy.sqrMagnitude;
+            if (distancepackF < distanceenemyF)
+            {
+                agent.SetDestination(closesthealingpack.transform.position);
+            }
+            else
+            {
+                agent.SetDestination(player.position);
+            }
+
+        }
+        else
+        {
+            agent.SetDestination(player.position);
+        }
+    }
+
+    private void Fleeing()
+    {
+        GameObject closesthealingpack = null;
+        closesthealingpack = FindClosestHealingPack();
+        Vector3 distancepack = closesthealingpack.transform.position - transform.position;
+        agent.SetDestination(closesthealingpack.transform.position);
+
     }
 
     private void Attacking()
     {
+
         Rigidbody rb = player.GetComponentInChildren<Rigidbody>();
-        agent.SetDestination(transform.position);
-        transform.LookAt(player);
+        Rigidbody rb2 = this.GetComponentInChildren<Rigidbody>();
         Vector3 cleanedvelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
-        Vector3 predictedposition = PredictPoint(transform.position, 65f, player.position, cleanedvelocity);
-        agent.SetDestination(predictedposition);
-        transform.LookAt(predictedposition);
+        Vector3 predictedposition = PredictPoint(transform.position, 40f, player.position, cleanedvelocity);
+
+        GameObject closesthealingpack = null;
+        if (healingpackInSightRange)
+        {
+            closesthealingpack = FindClosestHealingPack();
+            Vector3 distancepack = closesthealingpack.transform.position - transform.position;
+            Vector3 distanceenemy = player.position - transform.position;
+            float distancepackF = distancepack.sqrMagnitude;
+            float distanceenemyF = distanceenemy.sqrMagnitude;
+            if (distancepackF < distanceenemyF)
+            {
+                agent.SetDestination(closesthealingpack.transform.position);
+                transform.LookAt(predictedposition);
+            }
+            else
+            {
+                agent.SetDestination(predictedposition);
+                transform.LookAt(predictedposition);
+            }
+
+        }
+        else
+        {
+            agent.SetDestination(player.position);
+        }
+
+        //looks weird af
+
         if (predictedposition != new Vector3(123, 456, 789))
         {
             aimassist.transform.position = predictedposition;
-            transform.LookAt(aimassist.transform.position);
-            if (!startAttack)
+            //  transform.LookAt(aimassist.transform.position);
+            if (/*!startAttack*/false)//replaced with direct call to updated shooting logic
             {
+                shoot.Shoot();
                 startAttack = true;
-                Vector3 dir = new Vector3(1f, 0f, 0f);
-                Transform bulletTransform = Instantiate(pfBullet, gameObject.transform.position + gameObject.transform.forward * 1.5f, Quaternion.identity);
-                bulletTransform.GetComponent<BulletLogic>().Setup(dir, _enemy, gameObject);
                 Invoke(nameof(ResetAttack), timeBetweenAttack);
+            }
+            else if (ShootRays(true))
+            {
+                //shoot.Shoot();
+                //startAttack = true;
+                //Invoke(nameof(ResetAttack), timeBetweenAttack);
             }
         }
     }
 
+    private bool ShootRays(bool lookattarget)
+    {
+        Vector3 direction;
+        for (float i = -180f; i < 180f; i = i + 0.1f)
+        {
+            //direction = Quaternion.Euler(0, transform.eulerAngles.y, 0) * new Vector3((float)Math.Sin(i), 0, (float)Math.Cos(i));
+            direction = new Vector3((float)Math.Sin(i), 0, (float)Math.Cos(i));
+
+            Ray ray = new Ray(transform.position, direction);
+            RaycastHit hit;
+            RaycastHit hit2;
+            if (Physics.Raycast(ray, out hit, 80))
+            {
+                //Debug.DrawLine(transform.position, hit.point, Color.magenta);
+                if (hit.collider.tag == "Player")
+                {
+                    Debug.DrawLine(transform.position, hit.point, Color.yellow);
+                    if (lookattarget)
+                    {
+                        transform.LookAt(hit.point);
+                        shoot.Shoot();
+                        startAttack = true;
+                        Invoke(nameof(ResetAttack), timeBetweenAttack);
+                    }
+                    return true;
+                }
+            }
+
+            if (Physics.Raycast(ray, out hit, 50))
+            {
+                ray = new Ray(hit.point, Vector3.Reflect(direction, hit.normal));
+                if (Physics.Raycast(ray, out hit2, 28))
+                {
+                    if (hit2.collider.tag == "Player")
+                    {
+                        Debug.DrawLine(transform.position, hit.point, Color.blue);
+                        Debug.DrawLine(hit.point, hit2.point, Color.red);
+                        if (lookattarget && ((framecount + 144) < Time.frameCount))
+                        {
+                            Debug.Log(Time.frameCount);
+                            framecount = Time.frameCount;
+                            transform.LookAt(hit.point);
+                            shoot.Shoot();
+                            startAttack = true;
+                            Invoke(nameof(ResetAttack), timeBetweenAttack);
+                        }
+                        return true;
+                    }
+
+                }
+            }
+        }
+        return false;
+    }
     private Vector3 PredictPoint(Vector3 PC, float SC, Vector3 PR, Vector3 VR)
     {
         Vector3 D = PC - PR;
@@ -172,17 +302,48 @@ public class AIStateMachine : MonoBehaviour
         {
             if (Physics.CheckSphere(transform.position, fixedBulletDetectionSphere, whatIsBullet))  // player is shooting at ai
             {
+                Debug.Log("Attacking me");
                 //Debug.Log("AI agressive and Chasing down player");
                 //aiChaseDownPlayer = true;
+
+
                 _state = States.Attacking;
             }
             if (CheckSightField())      //player can only be chased if visible to ai
             {
                 walkPointSet = false;
                 _state = States.Chasing;
-            }
+            }  
         }
     }
+    GameObject FindInActiveObjectByLayer(int layer)
+    {
+
+        Transform[] objs = Resources.FindObjectsOfTypeAll<Transform>() as Transform[];
+        for (int i = 0; i < objs.Length; i++)
+        {
+            if (objs[i].hideFlags == HideFlags.None)
+            {
+                if (objs[i].gameObject.layer == layer)
+                {
+                    return objs[i].gameObject;
+                }
+            }
+        }
+        return null;
+    }
+
+    /*private void OnTriggerEnter(Collider other) //FIX THIS
+    {
+        if (other.tag == "Bullet")
+        {
+            evading = true;
+            time = Time.time + 1;
+            
+            evade = other.gameObject.transform.position * -1; //TODO: BEtter
+            Debug.Log(evade);
+        }
+    }*/
 
     // Update is called once per frame
     void Update()
@@ -190,30 +351,66 @@ public class AIStateMachine : MonoBehaviour
         playerInSightRange = Physics.CheckSphere(transform.position,sightRange,whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position,attackRange,whatIsPlayer);
         healingpackInSightRange = Physics.CheckSphere(transform.position,healingpackrange,whatIsHealingPack);
-        switch (_state)
+        if (playerLogic.HP < 45)
+            _state = States.Fleeing;
+        if (time>Time.time)
         {
-            case States.Patroling:
-                Patroling();
-                CheckSpecialCasesPatroling();
-                break;
-            case States.Chasing:
-                Chasing();
-                if (playerInAttackRange && CheckPointingAtEnemy())  //to attack only if enemy is not behind wall
-                {
-                    //aiChaseDownPlayer = false;
-                    _state = States.Attacking;
-                    Debug.Log("Changed to attacking");
-                }
-                if (!playerInSightRange && !aiChaseDownPlayer)
-                    _state = States.Patroling;
-                break;
-            case States.Attacking:
-                Attacking();
-                if (!playerInAttackRange || !CheckPointingAtEnemy())
-                    _state = States.Chasing;
-                break;
-            default:
-                break;
+            //TODO: 
+            agent.SetDestination(evade);
         }
+        else
+        {
+            switch (_state)
+            {
+                case States.Patroling:
+                    Patroling();
+                    CheckSpecialCasesPatroling();
+                    break;
+                case States.Chasing:
+                    Chasing();
+                    if (playerInAttackRange && ShootRays(false))  //to attack only if enemy is not behind wall
+                    {
+                        //aiChaseDownPlayer = false;
+                        _state = States.Attacking;
+                    }
+                    if (!playerInSightRange && !aiChaseDownPlayer)
+                        _state = States.Patroling;
+                    break;
+                case States.Attacking:
+                    Attacking();
+                    if (!playerInAttackRange || !CheckPointingAtEnemy())
+                        _state = States.Chasing;
+                    break;
+                case States.Fleeing:
+                    Fleeing();
+                    if (playerLogic.HP >= 45)
+                    {
+                        _state = States.Patroling;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public GameObject FindClosestHealingPack()
+    {
+        GameObject[] gos;
+        gos = GameObject.FindGameObjectsWithTag("HealingPack");
+        GameObject closest = null;
+        float distance = Mathf.Infinity;
+        Vector3 position = transform.position;
+        foreach (GameObject go in gos)
+        {
+            Vector3 diff = go.transform.position - position;
+            float curDistance = diff.sqrMagnitude;
+            if (curDistance < distance)
+            {
+                closest = go;
+                distance = curDistance;
+            }
+        }
+        return closest;
     }
 }
